@@ -1,0 +1,9 @@
+[
+    { "caption": "Axosoft: Me", "command": "axosoft_me" },
+    { "caption": "Axosoft: Log In", "command": "axosoft_auth" },
+    { "caption": "Axosoft: Log Out", "command": "axosoft_terminate_auth" },
+    { "caption": "Axosoft: List All Features", "command": "axosoft_features", "args": { "user": "None" } },
+    { "caption": "Axosoft: Search Features", "command": "axosoft_search_features" },
+    { "caption": "Axosoft: Create Feature", "command": "axosoft_create_features" },
+    { "caption": "Axosoft: Set Project", "command": "axosoft_projects" }
+]

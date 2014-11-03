@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Sublime-Axosoft Authorization Code</title>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row" style="margin:5em;">
+                <div class="center-block panel panel-success" style="width:32em;">
+                    <div class="panel-heading">
+                        <h1 class="panel-title">Sublime-Axosoft Authorization Code</h1>
+                    </div>
+                    <div class="panel-body">
+                        <div id="code-wrapper" class="form-group form-group-lg has-feedback has-error">
+                            <label for="code" class="control-label">Copy this code into SublimeText</label>
+                            <input type="text" class="form-control input-lg" id="code" placeholder="Something went wrong" readonly>
+                            <span id = "code-status" class="glyphicon form-control-feedback glyphicon-remove"></span>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <p>You should have a prompt at the bottom of your sublime text window, paste it there and hit enter to complete the log-in process.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            (function(){
+                var code = window.location.search.match(/code=((\w|-)*)/)[1],
+                    validCode = /^\w{8}-(\w{4}-){3}\w{12}$/.test(code);
+                if(validCode){
+                    document.getElementById("code-wrapper").className = document.getElementById("code-wrapper").className.replace( /error/ , 'success' );
+                    document.getElementById("code-status").className = document.getElementById("code-status").className.replace( /remove/ , 'ok' );
+                    document.getElementById("code").value = code;
+                }
+            }());
+        </script>
+    </body>
+</html>
