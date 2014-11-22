@@ -12,6 +12,17 @@ import json
 import re
 import datetime
 import webbrowser
+# from enum import Enum
+
+
+# class Items(Enum):
+
+#     """ Define our item types. """
+
+#     defects = 1
+#     features = 2
+#     tasks = 3
+#     incidents = 4
 
 
 LIB_PATH = os.path.join(
@@ -115,13 +126,35 @@ class AxosoftMeCommand(sublime_plugin.WindowCommand):
         """ Init. """
         self.window = window
         self.__me = None
+        self.__item_types = {
+            'Custom Items': 'tasks',
+            'Defects': 'defects',
+            'Incidents': 'incidents',
+            'User Stories': 'features'
+        }
 
     def __on_select(self, idx):
         """ When the user is selected. """
         if idx != -1:
+            sublime.set_timeout(
+                lambda: self.window.show_quick_panel(
+                    sorted(self.__item_types),
+                    self.__on_select2
+                ),
+                20
+            )
+        else:
+            pass
+
+    def __on_select2(self, idx):
+        """ When the user selects an item type. """
+        if idx != -1:
+            item_type = self.__item_types[
+                sorted(self.__item_types)[idx]
+            ]
             self.window.run_command(
-                'axosoft_features',
-                {'user': self.__me['id']}
+                'axosoft_items',
+                {'item_type': item_type, 'user': self.__me['id']}
             )
         else:
             pass
@@ -142,15 +175,15 @@ class AxosoftMeCommand(sublime_plugin.WindowCommand):
         )
 
 
-class AxosoftFeaturesCommand(sublime_plugin.WindowCommand):
+class AxosoftItemsCommand(sublime_plugin.WindowCommand):
 
-    """ Features Options."""
+    """ Items Options."""
 
     def __init__(self, window):
         """ Init. """
         self.window = window
         self.__items = []
-        self.__features_array = []
+        self.__items_array = []
         self.__selected = int
         self.__actions = {
             'View/Edit': self.__show_item,
@@ -160,9 +193,10 @@ class AxosoftFeaturesCommand(sublime_plugin.WindowCommand):
         }
         self.__time = {}
         self.__comment = {}
+        self.__item_type = None
 
     def __on_select_item(self, idx):
-        """ What to do when a feature was selected. """
+        """ What to do when a item was selected. """
         if idx != -1:
             self.__selected = idx
             sublime.set_timeout(
@@ -188,8 +222,8 @@ class AxosoftFeaturesCommand(sublime_plugin.WindowCommand):
         """ Open the selected item in a browser. """
         url = 'https://{0}/viewitem.aspx?id={1}&type={2}'.format(
             CONFIG["settings"].get('axosoft_domain'),
-            self.__features_array[selected]['id'],
-            self.__features_array[selected]['item_type']
+            self.__items_array[selected]['id'],
+            self.__items_array[selected]['item_type']
         )
         webbrowser.open(url)
 
@@ -197,20 +231,20 @@ class AxosoftFeaturesCommand(sublime_plugin.WindowCommand):
         """ Delete the selected item. """
         confirmation = sublime.ok_cancel_dialog(
             'You are about to delete Item #{0}\n Are you sure?'
-            .format(self.__features_array[selected]['id']),
+            .format(self.__items_array[selected]['id']),
             'Yes'
         )
         if confirmation:
             CONFIG['client'].delete(
-                'features',
-                self.__features_array[selected]['id']
+                self.__items_array[selected]['item_type'],
+                self.__items_array[selected]['id']
             )
         else:
             pass
 
     # def __start_comment(self, selected):
     #     """ Start comment. """
-    #     self.__comment['id'] = self.__features_array[selected]['id']
+    #     self.__comment['id'] = self.__items_array[selected]['id']
     #     self.window.show_input_panel(
     #         'Comment',
     #         '',
@@ -235,8 +269,8 @@ class AxosoftFeaturesCommand(sublime_plugin.WindowCommand):
 
     def __start_log_time(self, selected):
         """ Start to Log time to selected item. """
-        self.__time['id'] = self.__features_array[selected]['id']
-        self.__time['item_type'] = self.__features_array[selected]['item_type']
+        self.__time['id'] = self.__items_array[selected]['id']
+        self.__time['item_type'] = self.__items_array[selected]['item_type']
 
         self.window.show_input_panel(
             'Time (hours)',
@@ -278,10 +312,15 @@ class AxosoftFeaturesCommand(sublime_plugin.WindowCommand):
             'date_time': self.__time['date_time']
         }
 
-        CONFIG['client'].create(
-            'work_logs',
-            payload
-        )
+        try:
+            CONFIG['client'].create(
+                'work_logs',
+                payload
+            )
+        except ValueError:
+            sublime.message_dialog(
+                "Unable to log time.\nWhen entering time enter only a number."
+            )
 
     def __show_item(self, selected):
         """ List items. """
@@ -290,10 +329,10 @@ class AxosoftFeaturesCommand(sublime_plugin.WindowCommand):
         new_view.set_name(self.__items[selected])
         new_view.set_syntax_file('Packages/JavaScript/JSON.tmLanguage')
         new_view.run_command(
-            'axosoft_show_feature',
+            'axosoft_show_item',
             {
                 'text': json.dumps(
-                    self.__features_array[selected],
+                    self.__items_array[selected],
                     sort_keys=True,
                     indent=4,
                     separators=(',', ': ')
@@ -302,7 +341,7 @@ class AxosoftFeaturesCommand(sublime_plugin.WindowCommand):
         )
 
     @test_auth
-    def run(self, user=0, search=None):
+    def run(self, item_type, user=0, search=None):
         """ Run. """
         # Clear self.__itmes if anything was left in it
         if self.__items:
@@ -316,23 +355,24 @@ class AxosoftFeaturesCommand(sublime_plugin.WindowCommand):
             payload['search_string'] = search
 
         # Get the items from the API
-        features_data = CONFIG['client'].get(
-            "features",
+        items_data = CONFIG['client'].get(
+            item_type,
             None,
             payload
         )['data']
 
         # Did we get anything back?
-        if features_data:
-            self.__features_array = []
-            for feature in features_data:
+        if items_data:
+            self.__items_array = []
+            for item in items_data:
                 self.__items.append(
-                    'axof: #{0} - {1}'.format(
-                        feature['id'],
-                        feature['name']
+                    'axo{0}: #{1} - {2}'.format(
+                        item_type[:1],
+                        item['id'],
+                        item['name']
                     )
                 )
-                self.__features_array.append(feature)
+                self.__items_array.append(item)
 
             sublime.set_timeout(
                 lambda: self.window.show_quick_panel(
@@ -345,38 +385,41 @@ class AxosoftFeaturesCommand(sublime_plugin.WindowCommand):
             sublime.message_dialog("No Items Found")
 
 
-class AxosoftSearchFeaturesCommand(sublime_plugin.WindowCommand):
+class AxosoftSearchItemsCommand(sublime_plugin.WindowCommand):
 
-    """ Search for a feature."""
+    """ Search for a Item."""
 
     def __init__(self, window):
         """ Init. """
+        self.__item_type = None
         self.window = window
 
     @test_auth
-    def run(self):
+    def run(self, item_type):
         """ Run. """
+        self.__item_type = item_type
         self.window.show_input_panel('Search', '', self.__search, None, None)
 
     def __search(self, text):
         """ Search. """
         self.window.run_command(
-            'axosoft_features',
-            {'user': None, 'search': text}
+            'axosoft_items',
+            {'item_type': self.__item_type, 'user': None, 'search': text}
         )
 
 
-class AxosoftCreateFeaturesCommand(sublime_plugin.WindowCommand):
+class AxosoftCreateItemsCommand(sublime_plugin.WindowCommand):
 
-    """ Create a new feature."""
+    """ Create a new Items."""
 
     def __init__(self, window):
         """ Init. """
         self.window = window
         self.payload = {}
+        self.__item_type = None
 
     def __create(self, text):
-        """ Start creating a new project. """
+        """ Start creating a new item. """
         # get the project from the settings
         self.payload['item']['project'] = {
             'id': CONFIG['settings'].get(
@@ -390,7 +433,7 @@ class AxosoftCreateFeaturesCommand(sublime_plugin.WindowCommand):
 
         try:
             data = CONFIG['client'].create(
-                "features",
+                self.__item_type,
                 payload=self.payload
             )['data']
         except ValueError as response:
@@ -399,8 +442,8 @@ class AxosoftCreateFeaturesCommand(sublime_plugin.WindowCommand):
             data = response.args[0]['data']
 
         self.window.run_command(
-            'axosoft_features',
-            {'user': None, 'search': data['id']}
+            'axosoft_items',
+            {'item_type': self.__item_type, 'user': None, 'search': data['id']}
         )
 
     def __description(self, text):
@@ -426,10 +469,11 @@ class AxosoftCreateFeaturesCommand(sublime_plugin.WindowCommand):
         )
 
     @test_auth
-    def run(self):
+    def run(self, item_type):
         """ Run. """
         # check if project has been set
         if CONFIG['settings'].has('axosoft_project'):
+            self.__item_type = item_type
             self.payload['item'] = {}
             self.window.show_input_panel(
                 'Title',
@@ -482,9 +526,9 @@ class AxosoftProjectsCommand(sublime_plugin.WindowCommand):
         )
 
 
-class AxosoftShowFeatureCommand(sublime_plugin.TextCommand):
+class AxosoftShowItemCommand(sublime_plugin.TextCommand):
 
-    """ Open a feature for editing."""
+    """ Open a item for editing."""
 
     def __init__(self, view):
         """ Init. """
@@ -506,7 +550,7 @@ class EventListeners(sublime_plugin.EventListener):
 
     def on_modified(self, view):
         """ On Modified. """
-        if view.name().startswith("axof"):
+        if view.name().startswith("axo"):
             if view.name() not in self.modified_views:
                 self.modified_views[view.name()] = 1
             else:
@@ -514,8 +558,7 @@ class EventListeners(sublime_plugin.EventListener):
 
     def on_pre_close(self, view):
         """ Save the item on close. """
-        print(self.modified_views[view.name()])
-        if (view.name().startswith("axof")
+        if (view.name().startswith("axo")
                 and view.name() in self.modified_views
                 and self.modified_views[view.name()] > 2):
             confirmation = sublime.ok_cancel_dialog(
@@ -523,17 +566,16 @@ class EventListeners(sublime_plugin.EventListener):
                 "Save"
             )
             if confirmation:
-                item_id = re.match(
-                    'axof: #([0-9]+) -',
-                    view.name()
-                ).group(1)
                 content_region = sublime.Region(0, view.size())
                 content_string = view.substr(content_region)
+                content_json = json.loads(content_string)
+                item_id = content_json['id']
+                item_type = content_json['item_type']
 
                 CONFIG['client'].update(
-                    'features',
+                    item_type,
                     item_id,
-                    payload={'item': json.loads(content_string)}
+                    payload={'item': content_json}
                 )
 
             self.modified_views[view.name()] = 0
