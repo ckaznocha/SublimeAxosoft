@@ -558,7 +558,7 @@ class EventListeners(sublime_plugin.EventListener):
 
     def on_pre_close(self, view):
         """ Save the item on close. """
-        if (view.name().startswith("axo")
+        if (re.match(r'^axo[dfit]:\s#\d+', view.name())
                 and view.name() in self.modified_views
                 and self.modified_views[view.name()] > 2):
             confirmation = sublime.ok_cancel_dialog(

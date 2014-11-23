@@ -3,13 +3,13 @@ A Sublime Text 3 package for Axosoft (formerly OnTime).
 
 ## Features
 * Set a default project
-* Create a new feature item in a project
-* List all feature items assigned to you
-* Search for feature items
-* View/Edit a feature item directly from sublime text
-* Delete a feature item
-* Open a feature item in your browser
-* Log time to any feature item
+* Create a new item of any type in a project
+* List all items assigned to you
+* Search for items
+* View/Edit an item directly from sublime text
+* Delete an item
+* Open an item in your browser
+* Log time to any item
 
 ## Installation
 ### Package Control
