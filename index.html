@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="SublimeAxosoft : A Sublime Text 3 package for Axosoft (formerly OnTime).">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>SublimeAxosoft</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/ckaznocha/SublimeAxosoft">View on GitHub</a>
+
+          <h1 id="project_title">SublimeAxosoft</h1>
+          <h2 id="project_tagline">A Sublime Text 3 package for Axosoft (formerly OnTime).</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/ckaznocha/SublimeAxosoft/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/ckaznocha/SublimeAxosoft/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="sublimeaxosoft" class="anchor" href="#sublimeaxosoft" aria-hidden="true"><span class="octicon octicon-link"></span></a>SublimeAxosoft</h1>
+
+<p>A Sublime Text 3 package for Axosoft (formerly OnTime).</p>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Set a default project</li>
+<li>Create a new item of any type in a project</li>
+<li>List all items assigned to you</li>
+<li>Search for items</li>
+<li>View/Edit an item directly from sublime text</li>
+<li>Delete an item</li>
+<li>Open an item in your browser</li>
+<li>Log time to any item</li>
+</ul>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<h3>
+<a id="package-control" class="anchor" href="#package-control" aria-hidden="true"><span class="octicon octicon-link"></span></a>Package Control</h3>
+
+<p>This is the recommended installation method.</p>
+
+<ol>
+<li>Install <a href="http://wbond.net/sublime_packages/package_control">Sublime Package Control</a> if you have not already.</li>
+<li>From the Command Palette select <code>Package Control: Install Package</code>.</li>
+<li>Search for <code>SublimeAxosoft</code> and select it when it comes up.</li>
+<li>Restart Sublime Text for good measure.</li>
+<li>Continue to <a href="#configuration">Configuration</a>.</li>
+</ol>
+
+<h3>
+<a id="git" class="anchor" href="#git" aria-hidden="true"><span class="octicon octicon-link"></span></a>Git</h3>
+
+<ol>
+<li>Open a terminal or cmd.</li>
+<li>
+<code>cd</code> to your Sublime Text 3 <code>Packages</code> directory.</li>
+<li>
+<code>git clone git://github.com/ckaznocha/SublimeAxosoft.git</code>.</li>
+<li>Restart Sublime Text if you had it open for good measure.</li>
+<li>Continue to <a href="#configuration">Configuration</a>.</li>
+</ol>
+
+<h2>
+<a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration</h2>
+
+<p>Before you can use this package you'll need to configure it to use your Axosoft instance.</p>
+
+<ol>
+<li>Figure out the URL you use to access Axosoft.</li>
+<li>From Sublime Text navigate to the <code>Preferences</code> menu and find your way to <code>Package Settings-&gt;SublimeAxosoft-&gt;Settings - User</code>.</li>
+<li>In the file that opens, add a property called <code>axosoft_domain</code> with the value set to the URL from step 1.
+
+<ul>
+<li>e.g. if your URL is <code>http://foo.axosoft.com</code> you would use <code>foo.axosoft.com</code> as the value.</li>
+<li>Your file should look something like this:</li>
+</ul>
+
+<div class="highlight highlight-JSON"><pre>    {
+        <span class="pl-s"><span class="pl-pds">"</span>axosoft_domain<span class="pl-pds">"</span></span> : <span class="pl-s"><span class="pl-pds">"</span>foo.axosoft.com<span class="pl-pds">"</span></span>
+    }</pre></div>
+</li>
+<li>Save the file.</li>
+<li>You will now be able to authenticate and begin using the package.</li>
+</ol>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a id="log-in" class="anchor" href="#log-in" aria-hidden="true"><span class="octicon octicon-link"></span></a>Log In</h3>
+
+<p>Before you can do anything you will need to authenticate with your Axosoft instance.</p>
+
+<ol>
+<li>From the Command Palette select <code>Axosoft: Log In</code>.</li>
+<li>A new browser window will open prompting you to log in and grant access to <code>SublimeAxosoft</code>
+</li>
+<li>Once you grant access you will be forwarded to a page displaying your authentication code.</li>
+<li>Copy and paste the the authentication code into the <code>code</code> prompt at the bottom of your Sublime Text window and hit enter.</li>
+</ol>
+
+<h3>
+<a id="log-out" class="anchor" href="#log-out" aria-hidden="true"><span class="octicon octicon-link"></span></a>Log Out</h3>
+
+<p>You may wish to revoke access from Sublime Text to access your Axosoft instance.</p>
+
+<ol>
+<li>From the Command Palette select <code>Axosoft: Log Out</code>.</li>
+</ol>
+
+<h3>
+<a id="set-the-current-project" class="anchor" href="#set-the-current-project" aria-hidden="true"><span class="octicon octicon-link"></span></a>Set the current project</h3>
+
+<ol>
+<li>From the Command Palette select <code>Axosoft: Set Project</code>.</li>
+<li>You will be presented with a list of available projects, choose one.</li>
+<li>You'll get a confirmation that the project has been set.</li>
+</ol>
+
+<h3>
+<a id="create-a-new-item" class="anchor" href="#create-a-new-item" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create a new item</h3>
+
+<ol>
+<li>From the Command Palette select <code>Axosoft: Create Feature</code>.</li>
+<li>Follow the prompts.</li>
+</ol>
+
+<h3>
+<a id="interact-with-items" class="anchor" href="#interact-with-items" aria-hidden="true"><span class="octicon octicon-link"></span></a>Interact with items</h3>
+
+<ol>
+<li>From the Command Palette select <code>Axosoft: List All Features</code> or <code>Axosoft: Search Features</code>.</li>
+<li>Choose a feature to interact with.</li>
+</ol>
+
+<h4>
+<a id="delete" class="anchor" href="#delete" aria-hidden="true"><span class="octicon octicon-link"></span></a>Delete</h4>
+
+<ol>
+<li>Choose <code>Delete</code>.</li>
+<li>Confirm deletion.</li>
+</ol>
+
+<h4>
+<a id="log-time" class="anchor" href="#log-time" aria-hidden="true"><span class="octicon octicon-link"></span></a>Log Time</h4>
+
+<ol>
+<li>Choose <code>Log Time</code>.</li>
+<li>Follow the prompt.</li>
+</ol>
+
+<h4>
+<a id="open-in-browser" class="anchor" href="#open-in-browser" aria-hidden="true"><span class="octicon octicon-link"></span></a>Open in browser</h4>
+
+<ol>
+<li>Choose <code>Open in Browser</code>.</li>
+</ol>
+
+<h4>
+<a id="edit-in-sublime-text" class="anchor" href="#edit-in-sublime-text" aria-hidden="true"><span class="octicon octicon-link"></span></a>Edit in Sublime Text</h4>
+
+<ol>
+<li>Choose <code>View/Edit</code>.</li>
+<li>Make some modifications in the new tab that opens.</li>
+<li>Close the tab.</li>
+<li>Confirm that you want to save your changes.</li>
+</ol>
+
+<p>This project and its contributers are in no way affiliated with Axosoft. Axosoft is the trademark of Axosoft, LLC</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">SublimeAxosoft maintained by <a href="https://github.com/ckaznocha">ckaznocha</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
