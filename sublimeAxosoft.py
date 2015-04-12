@@ -6,40 +6,12 @@ A Sublime Text 3 plug-in for managing issues in Axosoft.
 # pylint: disable=F0401,E0611,R0903,W0611,R0201
 import sublime
 import sublime_plugin
-import os
-import sys
 import json
 import re
 import datetime
 import webbrowser
-# from enum import Enum
-
-
-# class Items(Enum):
-
-#     """ Define our item types. """
-
-#     defects = 1
-#     features = 2
-#     tasks = 3
-#     incidents = 4
-
-
-LIB_PATH = os.path.join(
-    os.path.dirname(__file__),
-    'lib'
-)
-sys.path.append(os.path.join(LIB_PATH, 'axosoft'))
-sys.path.append(os.path.join(LIB_PATH, 'requests'))
-sys.path.append(
-    os.path.join(
-        os.path.dirname(__file__),
-        'src'
-    )
-)
-
-from config import CONFIG
-from axosoft_api import Axosoft
+from .AxosoftConfig import CONFIG
+from .axosoft_api import Axosoft
 
 
 def plugin_loaded():
